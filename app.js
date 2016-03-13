@@ -40,17 +40,21 @@ widgets.controller('RestaurantCtrl', ['$scope', function($scope){
 widgets.controller('PhotosCtrl', ['$scope', function($scope){
 
   $scope.rawFeed = instagramResponse;
-
   $scope.photosPerPage = 12;
-
   $scope.currentPage = 1;
-
+  $scope.selectedUser = '';
+  $scope.selectedFilter = '';
+  $scope.selectedTags = [''];
   $scope.displayImages = $scope.rawFeed.data;
 
   // Update the pagesArr whenever displayImages changes, this updates
   // pagination in the view so we're not showing page 2 when there is only
   // one page of results.
-  $scope.$watch('displayImages', function() {
+  
+  // Ran into issue here just watching displayImages itself.  Since displayImages
+  // is assigned in the ng-repeat directive, its being updated by the digest loop
+  // which then fires this $watch and logs rootScope:infdig error to console
+  $scope.$watch('displayImages.length', function() {
     var pages = [];
     var pageCount = Math.ceil($scope.displayImages.length / $scope.photosPerPage);
     for (var i=1; i<=pageCount; i++){
@@ -64,27 +68,34 @@ widgets.controller('PhotosCtrl', ['$scope', function($scope){
     $scope.offset = (pageNum - 1) * $scope.photosPerPage;
   };
 
-  $scope.allFilters = (function(){
-    var filters = {"All": ''};    
-    $scope.rawFeed.data.forEach(function(image){
-      if ( !(Object.keys(filters).includes(image.filter)) ) {
-        filters[image.filter] = image.filter;
-      }
-    });
-    return filters;
-  })();
+  // setup allFilters and allHashtags from the rawFeed
+  var init = function() {
+    $scope.allFilters = {"All": ''};
+    $scope.allHashtags = {"All": ''};
+    $scope.allUsers = {"All": ''};
 
-  $scope.allHashtags = (function(){
-    var hashtags = {"All": ''};
     $scope.rawFeed.data.forEach(function(image){
+
+      // gather unique filters
+      if ( !(Object.keys($scope.allFilters).includes(image.filter)) ) {
+        $scope.allFilters[image.filter] = image.filter;
+      }
+
+      // gather unique hashtags
       image.tags.forEach(function(tag){      
-        if ( !(Object.keys(hashtags).includes(tag)) ) {
-          hashtags[tag] = tag;
+        if ( !(Object.keys($scope.allHashtags).includes(tag)) ) {
+          $scope.allHashtags[tag] = tag;
         }
       });
+
+      if ( !(Object.keys($scope.allUsers).includes(image.user.username)) ) {
+        $scope.allUsers[image.user.username] = image.user.username;
+      }
+
     });
-    return hashtags;
-  })();
+  };
+
+  init();
 
 }]);
 

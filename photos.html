@@ -29,31 +29,32 @@
 
   <div class="row">
     <div class="col-md-12 text-center">
-      Page: 
-      <span ng-repeat="page in pagesArr">
-        <button class="btn btn-primary" ng-disabled="page == currentPage" ng-click="changePage(page)">{{ page }}</button>
-      </span> | 
+      <div class="form-inline">
+        
+        Page: 
+        <span ng-repeat="page in pagesArr">
+          <button class="btn btn-primary" ng-disabled="page == currentPage" ng-click="changePage(page)">{{ page }}</button>
+        </span>  
 
-      <label for="instagram-filter" class="sr-only">Select Instagram Filter</label>
-      <select name="instagram-filter" ng-model="selectedFilter" ng-options="key for (key, value) in allFilters">
-        <option value="" disabled>Instagram Filters</option>
-      </select> | 
+        <label for="instagram-filter">Select Instagram Filter</label>
+        <select class="form-control" name="instagram-filter" ng-model="selectedFilter" ng-options="key for (key, value) in allFilters">
+        </select>  
 
-      <label for="hashtag-filter" class="sr-only">Select Hashtags</label>
-      <select name="hashtag-filter" multiple="true" ng-model="selectedTags" ng-options="key for (key, value) in allHashtags">
-        <option value="" disabled>Hashtags</option>
-      </select>  |
+        <label for="hashtag-filter">Select Hashtags</label>
+        <select class="form-control" name="hashtag-filter" multiple ng-model="selectedTags" ng-options="key for (key, value) in allHashtags">
+        </select>  
 
-      <ng-pluralize count="displayImages.length" when="{'1': '1 Result', 'other': '{} Results'}">
-      </ng-pluralize>
+        <ng-pluralize count="displayImages.length" when="{'1': '1 Result', 'other': '{} Results'}">
+        </ng-pluralize>
 
+      </div>
     </div>
   </div>
 
   <hr>
 
   <div class="row">
-    <div class="col-md-4" ng-repeat="image in displayImages = ( rawFeed.data | filter:{filter:selectedFilter} | filterHashtags:selectedTags ) | limitTo : photosPerPage : offset">
+    <div class="col-md-4" ng-repeat="image in displayImages = ( rawFeed.data | filter:{filter:selectedFilter} | filterHashtags:selectedTags | filter:{user:{username:selectedUser}}) | limitTo : photosPerPage : offset">
 
       <div class="text-center">
         <p>
