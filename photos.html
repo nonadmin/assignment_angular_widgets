@@ -54,7 +54,7 @@
   <hr>
 
   <div class="row">
-    <div class="col-md-4" ng-repeat="image in displayImages = ( rawFeed.data | filter:{filter:selectedFilter} | filterHashtags:selectedTags | filter:{user:{username:selectedUser}}) | limitTo : photosPerPage : offset">
+    <div class="col-md-4" ng-repeat="image in displayImages = ( rawFeed.data | filter:{filter:selectedFilter} | filterHashtags:selectedTags | filter:{user:{username:selectedUser}} ) | limitTo : photosPerPage : offset">
 
       <div class="text-center">
         <p>
@@ -83,6 +83,39 @@
         </p>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 
+  Use of $parent here as things like ng-if and ng-repeat create a new scope
+  and so you can't directly reference the controller's $scope
+  -->
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Users List</h4>
+      Selected User: {{ selectedUser ? selectedUser : "None" }}
+      <a ng-if="selectedUser" href="javascript:void(0)" ng-click="$parent.selectedUser = ''">Clear</a>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Username (Click to Filter Photos)</th>
+            <th>Full Name</th>
+            <th>Profile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(username, info) in allUsers">
+            <td>
+              <a href="javascript:void(0)" ng-click="$parent.selectedUser = username">{{ username }}</a>
+            </td>
+            <td>{{ info.fullName ? info.fullName : "None Given" }}</td>
+            <td>
+              <a ng-href="https://www.instagram.com/{{ username }}">Link</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

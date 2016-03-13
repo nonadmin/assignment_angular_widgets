@@ -50,7 +50,7 @@ widgets.controller('PhotosCtrl', ['$scope', function($scope){
   // Update the pagesArr whenever displayImages changes, this updates
   // pagination in the view so we're not showing page 2 when there is only
   // one page of results.
-  
+
   // Ran into issue here just watching displayImages itself.  Since displayImages
   // is assigned in the ng-repeat directive, its being updated by the digest loop
   // which then fires this $watch and logs rootScope:infdig error to console
@@ -72,7 +72,7 @@ widgets.controller('PhotosCtrl', ['$scope', function($scope){
   var init = function() {
     $scope.allFilters = {"All": ''};
     $scope.allHashtags = {"All": ''};
-    $scope.allUsers = {"All": ''};
+    $scope.allUsers = {};
 
     $scope.rawFeed.data.forEach(function(image){
 
@@ -89,7 +89,10 @@ widgets.controller('PhotosCtrl', ['$scope', function($scope){
       });
 
       if ( !(Object.keys($scope.allUsers).includes(image.user.username)) ) {
-        $scope.allUsers[image.user.username] = image.user.username;
+        $scope.allUsers[image.user.username] = {
+          username: image.user.username,
+          fullName: image.user.full_name
+        };
       }
 
     });
